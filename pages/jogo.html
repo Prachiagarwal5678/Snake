@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="/style.css">
+    <script>
+        window.onload = function(){
+    var stage = document.getElementById('stage')
+    var ctx = stage.getContext("2d")
+    var maca = new Image ()
+    maca.src = '../maca.png'
+    const comer = new Audio ()
+    comer.src = '../comer.mp3'
+    const gameover = new Audio ()
+    gameover.src = '../game-over.mp3'
+    
+    
+    var up = document.querySelector('.button1')
+    var left = document.querySelector('.button2')
+    var right = document.querySelector('.button3')
+    var down = document.querySelector('.button4')
+    
+
+    setInterval(game, 300)
+
+
+    
+
+    
+    const vel = 1
+
+    var vx = 1
+    var vy = 0
+    var px = 10
+    var py = 15
+    var tp = 20
+    var qp = 20
+    var ax = ay = 15
+    var score = 0
+    var record = 0
+    var over = false
+
+    var trail = []
+    var tail = 5
+
+    function game(){
+
+        px += vx
+        py += vy
+
+        if (px < 0){
+            px = qp-1
+        }
+        if (px > qp-1){
+            px = 0
+        }
+        if (py < 0){
+            py = qp-1
+        }
+        if (py > qp-1){
+            py = 0
+        }
+
+        ctx.fillStyle = "black"
+        ctx.fillRect(0,0, stage.width, stage.height)
+
+        ctx.fillStyle = "white"
+        ctx.font = "25px sherif"
+        ctx.fillText(score, 340, 30)
+        
+        ctx.drawImage(maca, ax*tp, ay*tp, tp,tp)
+       
+        /*ctx.fillStyle = 'red'; // codigo para voltar peça vermelha
+        ctx.fillRect(ax*tp, ay*tp, tp,tp)*/
+
+        ctx.fillStyle = "green"
+        for (let i = 0; i < trail.length; i++) {
+            ctx.fillRect(trail[i].x*tp, trail[i].y*tp, tp-2, tp-2)
+
+            if(trail[i].x == px && trail[i].y ==py){ //onde acontece o game over
+                vx = vy = 0
+                tail = 5
+                score = 0
+                over = true
+                
+
+                if(over = true){
+                    ctx.fillStyle = "white"
+                    ctx.font = "35px Arial"
+                    ctx.fillText('GAME OVER', 95, 200)
+                    
+                    ctx.fillStyle = "white"
+                    ctx.font = "20px Arial"
+                    ctx.fillText(`RECORD: ${record}`, 140, 220)           
+                }
+                
+               
+            }
+        }
+        trail.push({x:px, y:py})
+        while (trail.length > tail){
+            trail.shift()
+        }
+
+        if (ax == px && ay == py){
+            comer.play()
+            tail++
+            score = score + 20
+            if (score > record){
+                record = score
+            }
+            ax = Math.floor(Math.random()*qp)
+            ay = Math.floor(Math.random()*qp)
+        }
+    }
+    
+    up.addEventListener("mousedown", function(){
+        vx = 0
+        vy = -vel
+    })
+    left.addEventListener("mousedown", function(){
+        vx = -vel
+        vy = 0
+    })
+    right.addEventListener("mousedown", function(){
+        vx = vel
+        vy = 0
+    })
+    down.addEventListener("mousedown", function(){
+        vx = 0
+        vy = vel
+    })
+    
+    document.addEventListener("keydown", keypush)
+    function keypush (event){
+        switch (event.keyCode) {
+            case 37://left
+                vx = -vel
+                vy = 0
+                break;
+            case 38://up
+                vx = 0
+                vy = -vel
+                break;
+            case 39://right
+                vx = vel
+                vy = 0
+                break;
+            case 40://down
+                vx = 0
+                vy = vel
+                break;
+            default:
+                break;
+        }
+    }
+
+}
+    </script>
+    <audio autoplay loop src="/music1.mp3"></audio>
+    
+    <title>Snake Game</title>
+</head>
+<body class="body-jogo" >
+    <img class="img-jogo" src="/fundo1.jpeg" alt="">
+    <div class="jogo">
+        <canvas id="stage" width="400" height="400"><div id="score">score</div></canvas>
+    </div>
+    <div class="button">
+        <div><button class="button1">⬆</button></div>
+        <div><button class="button2">⬅</button><button class="button3">➡</button></div>
+        <div><button class="button4">⬇</button></div>
+    </div>
+</body>
+</html>
